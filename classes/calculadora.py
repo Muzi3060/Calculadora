@@ -9,11 +9,36 @@ class Calculadora():
         self.pessoas.append(pessoa)
 
     def total_salarios(self):
-        pass
+        total = 0
+
+        for p in self.pessoas:
+            total += p.salario
+
+        return total
+
+
 
     def calcular_percentual(self):
-        pass
+        porcentual = []
+        total = self.total_salarios()
+
+        for p in self.pessoas:
+            percent = p.salario / total
+            porcentual.append(percent)
+
+        return porcentual
+
 
     def dividir_gastos(self):
-        pass
+        percentuais = self.calcular_percentual()
+        resultados = {}
 
+        for i in range(len(self.pessoas)):
+            pessoa = self.pessoas[i]
+            percentual = percentuais[i]
+
+            valor = self.gasto * percentual
+
+            resultados[pessoa.nome] = valor
+
+        return resultados

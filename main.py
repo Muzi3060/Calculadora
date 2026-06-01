@@ -1,58 +1,127 @@
-from rich import print, inspect
+from rich import print
 from rich.panel import Panel
 import os
+
 from classes.calculadora import Calculadora
 from classes.pessoa import Pessoa
 
 
+def limpar_tela():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
-# IDEIAS NOVAS -- AO INVÉS DE SÓ TER OPÇÃO DE CALCULAR E SAIR, ADICIONAR UMA 3 OPÇÃO PARA CALCULAR AS DIVIDAS UMA POR UMA E DIZER QUAL O TOTAL DE DIVIDAS
-# IDEIAS NOVAS -- ADICIONAR UMA OPÇÃO PARA DIZER QUANTO DO TOTAL DA DIVIDA SERA PARCELADO, POR EXEMPLO, SE A DIVIDA É 6000 E A PESSOA SÓ VAI DIVIDIR EM 3 2000, TER UMA OPÇÃO PARA DIVIDIR SÓ OS 2000 E O RESTANTE DA DIVIDA SER PAGA POR 1 PESSOA, OU PELA QUANTIDADE X DE PESSOAS QUE VÃO PARCELAR O RESTO
 
-def main():
+def pausar():
+    input('\nPressione ENTER para continuar...')
+
+
+def mostrar_menu():
     print(
         Panel(
-            '[blue]1 - Calcular[/]   [red]2 - Sair[/]',
+            '[blue]1 - Calcular[/]    [red]2 - Sair[/]',
             title='[green]CONTROLE DE GASTOS[/]',
             subtitle='Escolha uma opção'
         )
     )
 
+
+def ler_float(mensagem):
+    while True:
+        try:
+            return float(input(mensagem))
+        except ValueError:
+            print('[red]Digite um número válido![/]')
+
+
+def ler_int(mensagem):
+    while True:
+        try:
+            return int(input(mensagem))
+        except ValueError:
+            print('[red]Digite um número inteiro válido![/]')
+
+
+def mostrar_resumo(orcamento, gastos):
+    print(
+        Panel(
+            f'Orçamento: [green]R${orcamento:.2f}[/]\n'
+            f'Gastos: [red]R${gastos:.2f}[/]\n'
+            f'Sobra: [cyan]R${orcamento - gastos:.2f}[/]',
+            title='[yellow]RESUMO[/]'
+        )
+    )
+
+
+def mostrar_resultado(resultado):
+    texto = ''
+
+    for nome, valor in resultado.items():
+        texto += f'{nome} deve pagar [green]R${valor:.2f}[/]\n'
+
+    print(
+        Panel(
+            texto,
+            title='[blue]DIVISÃO DOS GASTOS[/]'
+        )
+    )
+
+
+def main():
+
     while True:
 
-        opcao = str(input('Digite um número: '))
+        limpar_tela()
+        mostrar_menu()
+
+        opcao = input('Digite um número: ')
 
         if opcao == '1':
-            os.system('cls')
-            orcamento = float(input('Qual o total do seu orçamento? '))
-            gastos = float(input('Qual o total dos gastos? '))
+
+            limpar_tela()
 
             print(
                 Panel(
-                    '[blue]Sim[/]   [red]Não[/]',
-                    title='[yellow]Os gastos serão divididos?[/]'
+                    '[yellow]Informe os dados abaixo[/]',
+                    title='DADOS INICIAIS'
                 )
             )
-            while True:
 
-                pergunta = str(input())
+            orcamento = ler_float('Qual o total do orçamento? R$ ')
+            gastos = ler_float('Qual o total dos gastos? R$ ')
 
-                if pergunta.lower() == 'sim':
-                    print('sim')
+            c1 = Calculadora(gastos, orcamento)
 
-                elif pergunta.lower() == 'não':
-                    print('não')
+            pessoas = ler_int('\nQuantas pessoas vão dividir? ')
 
-                else:
-                    print('Por favor, digite novamente...')
+            for i in range(pessoas):
+
+                print(f'\n[cyan]Pessoa {i + 1}[/]')
+
+                nome = input('Nome: ')
+                salario = ler_float('Salário: R$ ')
+
+                pessoa = Pessoa(nome, salario)
+
+                c1.adicionar_pessoa(pessoa)
+
+            resultado = c1.dividir_gastos()
+
+            limpar_tela()
+
+            mostrar_resumo(orcamento, gastos)
+
+            mostrar_resultado(resultado)
+
+            pausar()
 
         elif opcao == '2':
+
+            print('\n[green]Até logo![/]')
             break
 
         else:
-            print('Por favor, digite novamente uma das opções acima!')
 
-
+            print('[red]Opção inválida![/]')
+            pausar()
 
 
 if __name__ == '__main__':
