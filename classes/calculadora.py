@@ -9,9 +9,17 @@ class Calculadora():
         self.pessoas.append(pessoa)
 
     def somar_gastos(self, n1:float, n2:float):
-        t = n1 + n2
+        return n1 + n2
 
-        return t
+    def subtrair_gastos(self, n1:float, n2:float):
+        return n1 - n2
+
+    def divisao(self, n1:float, n2:float):
+        return n1 / n2
+
+    def multiplicar(self, n1:float, n2:float):
+        return n1 * n2
+
 
     def total_salarios(self):
         total = 0
