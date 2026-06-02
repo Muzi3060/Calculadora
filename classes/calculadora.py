@@ -1,5 +1,5 @@
 class Calculadora():
-    def __init__(self, gasto, orcamento):
+    def __init__(self, gasto= 0, orcamento= 0):
         self.pessoas = []
 
         self.gasto = gasto
@@ -8,6 +8,11 @@ class Calculadora():
     def adicionar_pessoa(self, pessoa):
         self.pessoas.append(pessoa)
 
+    def somar_gastos(self, n1:float, n2:float):
+        t = n1 + n2
+
+        return t
+
     def total_salarios(self):
         total = 0
 
@@ -15,8 +20,6 @@ class Calculadora():
             total += p.salario
 
         return total
-
-
 
     def calcular_percentual(self):
         porcentual = []
