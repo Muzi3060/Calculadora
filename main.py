@@ -6,6 +6,10 @@ from classes.calculadora import Calculadora
 from classes.pessoa import Pessoa
 
 
+# ADICIONAR UM LOOP NA HORA DE PEDIR NUMERO 1 E 2, PARA ENTÃO PERMITIR O USUARIO FAZER UMA CONTA COM VARIOS NUMEROS AO INVÉS DE SÓ 2.
+# QUANDO O USUARIO TERMINAR E NÃO QUERER MAIS ADICIONAR NUMEROS A CONTA, ELE SÓ DIGITA "TERMINAR" E PRONTO, VAI EXIBIR O TOTAL DE TODOS OS NÚMEROS QUE ELE PASSOU!
+
+
 def limpar_tela():
     os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -30,7 +34,10 @@ def ler_float(mensagem):
             valor = input(mensagem).replace(',', '.')
             return float(valor)
         except ValueError:
-            print('[red]Digite um número válido![/]')
+            print(
+                '[red]Digite um número válido![/]\n' 
+                '[yellow]Exemplo: 5000,25[/]'
+            )
 
 
 def ler_int(mensagem):
@@ -43,6 +50,22 @@ def ler_int(mensagem):
 def moeda(valor, cor="green"):
     return f'[{cor}]R$ {valor:.2f}[/]'.replace('.', ',')
 
+def mostrar_calculo(gastos, simbolo, resultado):
+    expressao = f' {simbolo} '.join(
+        str(valor).replace('.', ',')
+        for valor in gastos
+    )
+
+    print(
+        Panel(
+            f'[yellow]Expressão:[/]\n'
+            f'[cyan]{expressao}[/]\n\n'
+            f'[yellow]Quantidade de valores:[/] [white]{len(gastos)}[/]\n'
+            f'[bold green]Resultado:[/] {moeda(resultado)}',
+            title='[bold blue]RESULTADO DA OPERAÇÃO[/]',
+            border_style='blue'
+        )
+    )
 
 def mostrar_resumo(orcamento, gastos):
     print(
@@ -73,43 +96,106 @@ def mostrar_resultado(resultado):
     )
 
 
-def calculos():
-    n1 = float(input('Número 1: ').replace(',', '.'))
-    n2 = float(input('Número 2: ').replace(',', '.'))
-
-    duvida = input(
-        'Digitou o número correto? (sim/não): '
-    ).lower()
-
-    return n1, n2, duvida
-
-def validacao(operacao):
+def calculos(config):
+    gastos = []
+    count = 1
 
     while True:
 
-        n1, n2, duvida = calculos()
+        if count == 1:
+            gasto = ler_float(f'{config["primeiro"]}: ')
+        else:
+            gasto = ler_float(f'{config["outros"]}: ')
+
+        duvida = input(
+            '\nDigitou o Gasto correto? (sim/não): '
+        ).lower()
 
         if duvida == 'sim':
-
-
-            resultado = operacao(n1, n2)
+            gastos.append(gasto)
 
             print(
                 Panel(
-                    f'Resultado: {moeda(resultado, "green")}',
-                    title='[bold blue]RESULTADO[/]',
+                    f'[green]Valor adicionado:[/] {moeda(gasto)}\n'
+                    f'[cyan]Quantidade:[/] {len(gastos)}',
+                    title='[bold green]SUCESSO[/]',
                     border_style='green'
                 )
             )
 
-            pausar()
-            break
+            while True:
+                resposta = str(input('\nAdicionar outro? (sim/não) '))
+
+                if resposta == 'sim':
+                    print('\n[blue]Ok, continuando calculos...[/]')
+                    break
+
+                elif resposta == 'não':
+                    texto = ''
+
+                    for i, valor in enumerate(gastos, start=1):
+                        texto += (
+                            f'[cyan]Valor {i}:[/] '
+                            f'{moeda(valor)}\n'
+                        )
+
+                        texto += (
+                            f'\n[bold yellow]Total informado:[/] '
+                            f'{moeda(sum(gastos))}'
+                        )
+
+                    print(
+                        Panel(
+                            texto,
+                            title='[yellow]VALORES INFORMADOS[/]',
+                            border_style='blue'
+                        )
+                    )
+
+                    return gastos
+
+                else:
+                    print('\n[red]Resposta inválida! Digite sim ou não.[/]')
 
         elif duvida == 'não':
-            print('[yellow]Informe os dados novamente...[/]')
+            print('Digite novamente!')
 
-        else:
-            print('[red]Resposta inválida! Digite sim ou não.[/]')
+        count += 1
+
+def validacao(config):
+
+    print(
+        Panel(
+            f'[cyan]{config["nome"]}[/]',
+            title='[bold yellow]OPERAÇÃO ESCOLHIDA[/]',
+            border_style='green'
+        )
+    )
+
+    print(
+        Panel(
+            f'[bold cyan]{config["nome"]}[/]\n\n'
+            f'[yellow]Primeiro valor:[/] {config["primeiro"]}\n'
+            f'[yellow]Demais valores:[/] {config["outros"]}',
+            title='[green]COMO FUNCIONA[/]',
+            border_style='cyan'
+        )
+    )
+    
+    while True:
+
+        gastos = calculos(config)
+
+        resultado = config['função'](gastos)
+
+        mostrar_calculo(
+            gastos,
+            config['simbolos'],
+            resultado
+        )
+
+        pausar()
+        break
 
 
 
@@ -201,10 +287,37 @@ def main():
                 c1 = Calculadora()
 
                 operacoes = {
-                    1: c1.somar_gastos,
-                    2: c1.subtrair_gastos,
-                    3: c1.divisao,
-                    4: c1.multiplicar
+                    1: {
+                        'função': c1.somar_gastos,
+                        'simbolos': '+',
+                        'nome': 'Soma',
+                        'primeiro': 'Valor 1',
+                        'outros': 'Valor'
+                    },
+
+                    2: {
+                        'função': c1.subtrair_gastos,
+                        'simbolos': '-',
+                        'nome': 'Subtração',
+                        'primeiro': 'Número inicial',
+                        'outros': 'Subtrair'
+                    },
+
+                    3: {
+                        'função': c1.divisao,
+                        'simbolos': '/',
+                        'nome': 'Divisão',
+                        'primeiro': 'Número inicial',
+                        'outros': 'Dividir por'
+                    },
+
+                    4: {
+                        'função': c1.multiplicar,
+                        'simbolos': 'X',
+                        'nome': 'Multiplicação',
+                        'primeiro': 'Número inicial',
+                        'outros': 'Multiplicar por'
+                    }
                 }
 
                 if conta in operacoes:

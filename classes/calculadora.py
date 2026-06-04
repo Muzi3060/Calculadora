@@ -8,17 +8,37 @@ class Calculadora():
     def adicionar_pessoa(self, pessoa):
         self.pessoas.append(pessoa)
 
-    def somar_gastos(self, n1:float, n2:float):
-        return n1 + n2
+    def somar_gastos(self, gastos):
+        total = 0
 
-    def subtrair_gastos(self, n1:float, n2:float):
-        return n1 - n2
+        for num in gastos:
+            total += num
 
-    def divisao(self, n1:float, n2:float):
-        return n1 / n2
+        return total
 
-    def multiplicar(self, n1:float, n2:float):
-        return n1 * n2
+    def subtrair_gastos(self, gastos):
+        total = 0
+
+        for num in gastos:
+            total -= num
+
+        return total
+
+    def divisao(self, gastos):
+        total = 2
+
+        for num in gastos:
+            total /= num
+
+        return total
+
+    def multiplicar(self, gastos):
+        total = 2
+
+        for num in gastos:
+            total *= num
+
+        return total
 
 
     def total_salarios(self):

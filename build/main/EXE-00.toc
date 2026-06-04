@@ -116,7 +116,7 @@
  [],
  False,
  False,
- 1780329560,
+ 1780428750,
  [('run.exe',
    'C:\\Users\\fabio\\PycharmProjects\\Banco\\.venv\\Lib\\site-packages\\PyInstaller\\bootloader\\Windows-64bit-intel\\run.exe',
    'EXECUTABLE')],
