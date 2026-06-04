@@ -17,25 +17,25 @@ class Calculadora():
         return total
 
     def subtrair_gastos(self, gastos):
-        total = 0
+        total = gastos[0]
 
-        for num in gastos:
+        for num in gastos[1:]:
             total -= num
 
         return total
 
     def divisao(self, gastos):
-        total = 2
+        total = gastos[0]
 
-        for num in gastos:
+        for num in gastos[1:]:
             total /= num
 
         return total
 
     def multiplicar(self, gastos):
-        total = 2
+        total = gastos[0]
 
-        for num in gastos:
+        for num in gastos[1:]:
             total *= num
 
         return total
